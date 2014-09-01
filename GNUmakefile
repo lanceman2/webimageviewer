@@ -1,5 +1,5 @@
 
-YUI = yui-compressor
+YUI = yui-compressorrr
 JSCOMPILE = $(YUI) --type js --line-break 50
 #JSCOMPILE = cat
 CSSCOMPILE = $(YUI) --type css --line-break 50
@@ -37,7 +37,7 @@ clean_files = $(sort $(built_files) $(extra_clean_files))
 ##########################################################
 
 .jsp.js:
-	$(JSCOMPILE) $< > $@
+	$(JSCOMPILE) $< > $@ || rm -f $@
 
 build: $(built_files)
 
