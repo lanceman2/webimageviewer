@@ -1,5 +1,5 @@
 
-YUI = yui-compressorrr
+YUI = yui-compressor
 JSCOMPILE = $(YUI) --type js --line-break 50
 #JSCOMPILE = cat
 CSSCOMPILE = $(YUI) --type css --line-break 50
