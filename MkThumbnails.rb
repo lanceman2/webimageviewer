@@ -156,7 +156,7 @@ def get_prefixes(f, depth = '')
         files.each do |ff|
             get_prefixes(ff, depth + '  ')
         end
-    elsif File.exists?(f)
+    elsif File.exist?(f)
         $fileTypes.each do |t|
             regx = /#{'\.' + t + '$'}/
             if f =~ regx
@@ -227,7 +227,7 @@ def mk_thumb_images(prefix, type)
     while i < $numberOfThumbs
         filename = thumb_img_name(prefix, i, type)
         orgFilename = thumb_img_name(prefix, -1, type)
-        if not File.exists?(filename)
+        if not File.exist?(filename)
             $stdout.print 'Creating: ' + filename + "\n"
 
             img = Image::read(orgFilename).first
@@ -306,7 +306,7 @@ def mk_thumb_html(i, thumbLevel)
     end
 
     filename = thumb_html_name(get_prefix(i), thumbLevel, get_type(i))
-    title = img_path = thumb_img_name(get_prefix(i), -1, get_type(i))
+    title = thumb_img_name(get_prefix(i), -1, get_type(i))
 
 
     forwardLink = ''
@@ -353,7 +353,7 @@ def mk_thumb_html(i, thumbLevel)
 
 
 
-    if File.exists?( filename )
+    if File.exist?( filename )
         tmpf = Tempfile.new( 'MkThumbnail_' )
         exists = true
     else
@@ -841,7 +841,7 @@ def parse_args
     end
 
     # check javaScriptSrc path from indexFile
-    if($javaScriptSrc && !(File.exists?($javaScriptSrc)))
+    if($javaScriptSrc && !(File.exist?($javaScriptSrc)))
         $stdout.print "Bad --javascript-src option\n\n" +
             'path: ' + $javaScriptSrc + " was not found\n\n"            
         print_usage
@@ -873,12 +873,12 @@ def parse_args
     $prefix.each do |pre|
         path = pre[0] + $capSuffix
         key = rel_path($indexFile, pre[0])
-        if(File.exists?(path))
+        if(File.exist?(path))
           $captions[key] = path
         end
         path = pre[0] + $imgAltSuffix
         key = rel_path($indexFile, pre[0])
-        if(File.exists?(path))
+        if(File.exist?(path))
           $imgAlt[key] = path
         end
 
