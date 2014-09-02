@@ -1,0 +1,37 @@
+webimageviewer
+
+Scripts for viewing images with thumbnails in an HTML browser.
+
+Makes thumbnail images, and HTML files.
+
+----------------------------------------------
+         Example on Debian desktop
+----------------------------------------------
+
+sudo apt-get install ruby-rmagick
+
+# Get the directory that this file is in
+srcdir="$(dirname ${BASH_SOURCE[0]})"
+cd $srcdir
+
+
+rm -rf ~/tmp/webimageviewer_test
+mkdir -p ~/tmp/webimageviewer_test
+
+# copy some images to webimageviewer_test/
+# In my case this copied 12 images.
+cp /usr/share/images/desktop-base/*.png ~/tmp/webimageviewer_test
+cp $srcdir/MkThumbnails.jsp ~/tmp/webimageviewer_test/MkThumbnails.js
+
+# MkThumbnails.rb uses relative path like URLs do
+cd ~/tmp/webimageviewer_test/
+# To see the script help
+$srcdir/MkThumbnails.rb
+
+# example to generate HTML and thumbnails
+$srcdir/MkThumbnails.rb --number-next 1 --javascript-src MkThumbnails.js index.html .
+
+firefox index.html
+
+# That's it!  Now play your own way.
+
