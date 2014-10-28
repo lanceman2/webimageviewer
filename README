@@ -11,7 +11,7 @@ Makes thumbnail images, and HTML files.
 sudo apt-get install ruby-rmagick
 
 # Get the directory that this file is in
-srcdir="$PWD""
+srcdir="$PWD"
 cd $srcdir
 
 
