@@ -29,6 +29,7 @@
 // TODO: add ablity to set view image size using html and CSS <img> 
 // width and/or height attributes.
 
+tmpCoverDiv = false;
 
 viewDiv = false;
 debug = false;
@@ -49,6 +50,47 @@ function GetYPos(el)
     return y;
 }
 */
+
+// puts down an overlay page so the user can't click
+// any thing until all the removeOverlay() is called.
+// addOverlay() is called before the onload
+function addOverlay(numIcons)
+{
+  tmpCoverDiv = document.createElement('div');
+  tmpCoverDiv.style.zIndex = '10';
+  tmpCoverDiv.style.position = 'fixed';
+  tmpCoverDiv.style.opacity = '0.7';
+  tmpCoverDiv.style.backgroundColor = '#223';
+  tmpCoverDiv.style.top = '0px';
+  tmpCoverDiv.style.left = '0px';
+  tmpCoverDiv.style.width = '100%';
+  tmpCoverDiv.style.height = '100%';
+  tmpCoverDiv.style.textAlign = 'center';
+  tmpCoverDiv.style.color = '#500';
+  var p = document.createElement('div');
+  p.style.position = 'absolute';
+  p.style.width = '60%';
+  p.style.left = '20%';
+  p.style.top = '10%';
+  p.style.height = '60%';
+  p.style.padding = '30px';
+  p.style.fontSize = '300%';
+  //p.style.textAlign = 'center';
+  p.style.backgroundColor = '#A99';
+  tmpCoverDiv.appendChild(p);
+  p.appendChild(document.createTextNode('Loading ' + numIcons + ' Icons ...'));
+  document.body.appendChild(tmpCoverDiv);
+}
+
+
+function removeOverlay()
+{
+  if(tmpCoverDiv)
+  {
+    document.body.removeChild(tmpCoverDiv);
+    tmpCoverDiv = false;
+  }
+}
 
 function ScrollToViewDiv()
 {
@@ -615,6 +657,7 @@ function MkThumbnails_Setup()
     if(!n)
     {
         alert('Cannot find H1 tag');
+        removeOverlay();
         return;
     }
 
@@ -694,7 +737,11 @@ function MkThumbnails_Setup()
         else if(arg[0] && !img_path)
             img_path = arg[0];
     }
-    if(!img_path) return;
+    if(!img_path)
+    {
+      removeOverlay();
+      return;
+    }
 
     //alert('got img path=' + img_path);
 
@@ -715,5 +762,7 @@ function MkThumbnails_Setup()
         }
         img = img.nextSibling;
     }
+
+    removeOverlay();
 }
 

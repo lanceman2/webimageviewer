@@ -714,6 +714,12 @@ END
         </style>
     </head>
     <body>
+
+        <script>
+            // Some javaScript to run before page loads
+            addOverlay(#{$prefix.length.to_s});
+        </script>
+
 #{extraHTMLHeader}
         <h1>#{title}</h1> 
 
