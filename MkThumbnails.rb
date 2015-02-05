@@ -717,7 +717,8 @@ END
 
         <script>
             // Some javaScript to run before page loads
-            addOverlay(#{$prefix.length.to_s});
+            if(#{$prefix.length} > 0)
+                addOverlay(#{$prefix.length.to_s});
         </script>
 
 #{extraHTMLHeader}
@@ -742,6 +743,19 @@ END
             <img src="#{rel_path($indexFile, img_name)}" #{title}/></a>
 END
     end
+
+    f.print <<END
+
+    <script>
+        // Some javaScript to run before images load
+        MkThumbnails_Setup_onload = false;
+        MkThumbnails_Setup();
+        MkThumbnails_Setup_onload = true;
+    </script>
+
+END
+
+
 
     f.print <<END
     <div class=footer><small>Updated:

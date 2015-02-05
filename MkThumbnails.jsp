@@ -29,6 +29,8 @@
 // TODO: add ablity to set view image size using html and CSS <img> 
 // width and/or height attributes.
 
+
+
 tmpCoverDiv = false;
 
 viewDiv = false;
@@ -78,10 +80,18 @@ function addOverlay(numIcons)
   //p.style.textAlign = 'center';
   p.style.backgroundColor = '#A99';
   tmpCoverDiv.appendChild(p);
-  p.appendChild(document.createTextNode('Loading ' + numIcons + ' Icons ...'));
+  tmpCoverDiv.IconsLoaded = 0;
+  tmpCoverDiv.NumIcons = numIcons;
+  p.appendChild(tmpCoverDiv.TextNode = document.createTextNode(tmpCoverDiv.IconsLoaded));
+  p.appendChild(document.createTextNode('/' + numIcons + ' Icons Loaded'));
   document.body.appendChild(tmpCoverDiv);
 }
 
+function updateOverlay()
+{
+  if(tmpCoverDiv && tmpCoverDiv.IconsLoaded < tmpCoverDiv.NumIcons)
+    tmpCoverDiv.TextNode.data = ++tmpCoverDiv.IconsLoaded;
+}
 
 function removeOverlay()
 {
@@ -566,8 +576,13 @@ function EnableAutoScroll()
 function DisableViewing()
 {
     Viewing = false;
-    this.firstChild.data = 'enable javaScript inline viewing';
-    this.onclick = EnableViewing;
+
+    if(this)
+    {
+        if(this.firstChild)
+            this.firstChild.data = 'enable javaScript inline viewing';
+        this.onclick = EnableViewing;
+    }
 
     var img = document.body.firstChild;
 
@@ -624,6 +639,7 @@ function EnableViewing()
     
         img.title = 'view';
         img.onclick = ImgIconOnclick;
+        img.onload = updateOverlay;
         img.style.cursor = 'pointer';
         img.style.display = 'inline-block';
         img.Href = a.href;
@@ -634,15 +650,28 @@ function EnableViewing()
         a = next;
     }
 
-    this.onclick = DisableViewing;
-    this.firstChild.data = 'disable javaScript inline viewing';
+    if(this)
+    {
+        this.onclick = DisableViewing;
+        if(this.firstChild)
+            this.firstChild.data = 'disable javaScript inline viewing';
+    }
 
     if(localStorage && localStorage.MkThumbnails_javaScriptOff)
         delete localStorage.MkThumbnails_javaScriptOff;
 }
 
-function MkThumbnails_Setup()
+function Setup()
 {
+
+
+
+}
+
+// called before window.onload and after addOverlay()
+function MkThumbnails_Setup1()
+{
+
     if(!window.hasOwnProperty('caption'))
       caption = false; // no caption files to load
 
@@ -699,24 +728,36 @@ function MkThumbnails_Setup()
 
     span = document.createElement('span');
     span.className = 'nav';
-    span.onclick = EnableViewing;
-    span.appendChild(document.createTextNode('enable javaScript inline viewing'));
+
+
+    if(!localStorage || localStorage.MkThumbnails_javaScriptOff != 'true')
+    {
+      span.onclick = EnableViewing;
+      span.appendChild(document.createTextNode('enable javaScript inline viewing'));
+    }
+    else
+    {
+      span.onclick = DisableViewing;
+      span.appendChild(document.createTextNode('disable javaScript inline viewing'));
+    }
+
     span.tabIndex = 0;
     span.onkeypress = Util_Enter2Click;
     span.style.borderColor = '#000';
     span.style.borderWidth = '1px';
     span.style.borderStyle = 'solid';
     div.appendChild(span);
- 
 
     n.parentNode.insertBefore(div, n);
 
-    // It would appear that firefox localStorage cannot store booleans
-    // and can store strings.
-    if(!localStorage || localStorage.MkThumbnails_javaScriptOff != 'true')
-        span.onclick();
+    span.onclick();
+}
 
 
+
+// Called in window.onload
+function MkThumbnails_Setup2()
+{
     ////////////////////////////////////////////////////////
     //    parse ARGS
     ///////////////////////////////////////////////////////
@@ -737,32 +778,49 @@ function MkThumbnails_Setup()
         else if(arg[0] && !img_path)
             img_path = arg[0];
     }
-    if(!img_path)
-    {
-      removeOverlay();
-      return;
-    }
-
     //alert('got img path=' + img_path);
-
-    var href_len = img_path.length;
-
-    // Find the img to click
-    var img = document.body.firstChild;
-    while(img)
+    
+    if(img_path)
     {
-        while(img && img.nodeName != 'IMG')
-            img = img.nextSibling;
-        if(!img || img.nodeName != 'IMG') break;
-        var len = img.Href.length;
-        if(len >= href_len && img.Href.substr(len-href_len) === img_path)
+        var href_len = img_path.length;
+
+        // Find the img to click
+        var img = document.body.firstChild;
+        while(img)
         {
-            img.click();
-            break;
+            while(img && img.nodeName != 'IMG')
+                img = img.nextSibling;
+            if(!img || img.nodeName != 'IMG') break;
+            var len = img.Href.length;
+            if(len >= href_len && img.Href.substr(len-href_len) === img_path)
+            {
+                img.click();
+                break;
+            }
+            img = img.nextSibling;
         }
-        img = img.nextSibling;
     }
 
     removeOverlay();
 }
 
+// TODO: clean this up.
+
+MkThumbnails_Setup_ran = false;
+MkThumbnails_Setup_onload = true;
+
+function MkThumbnails_Setup()
+{
+  if(MkThumbnails_Setup_ran)
+      MkThumbnails_Setup2();
+  else if(MkThumbnails_Setup_onload == false)
+  {
+      MkThumbnails_Setup1();
+      MkThumbnails_Setup_ran = true;
+  }
+  else
+  {
+      MkThumbnails_Setup1();
+      MkThumbnails_Setup2();
+  }
+}
