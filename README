@@ -8,7 +8,7 @@ Makes thumbnail images, and HTML files.
          Example on Debian desktop
 ----------------------------------------------
 
-sudo apt-get install ruby-rmagick
+sudo apt-get install ruby-rmagick yui-compressor
 
 # Get the directory that this file is in
 srcdir="$PWD"
